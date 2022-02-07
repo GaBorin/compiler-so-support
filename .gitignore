@@ -1,3 +1,5 @@
 *.txt
 *.o
 *.cm
+*.tab.c
+*.tab.h
