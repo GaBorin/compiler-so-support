@@ -1,0 +1,1 @@
+void genBinary (Line * inst);
