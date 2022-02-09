@@ -162,7 +162,7 @@ static void checkNode(TreeNode * t) {
             && strcmp (t->name, "contextIn") != 0 && strcmp (t->name, "contextOut") != 0 
             && strcmp (t->name, "swapIn") != 0  && strcmp (t->name, "swapOut") != 0
             && strcmp (t->name, "execSo") != 0  && strcmp (t->name, "execProcess") != 0
-            && strcmp (t->name, "checkProcess") != 0)
+            && strcmp (t->name, "checkProcess") != 0 && strcmp (t->name, "setPC") != 0)
             stmtError (t, "not declared");
           break;
         default:

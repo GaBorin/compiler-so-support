@@ -16,6 +16,7 @@
 #define TEMP_RA 31
 
 #define PROGRAM_ADDRESS 100
+#define PROGRAM_PC 500
 
 const char * OpKindNames[] = {  "add", "sub", "mult", "div", 
 								"eq", "dif", "lt", "let", "gt", "get", "and", "or", 
@@ -623,6 +624,57 @@ static void genExp (TreeNode * tree) {
 
 				insertQuad (opGET_PROCESS, rs, rt, rd);
 			}
+			else if (strcmp (tree->attr.name, "setPC") == 0) {
+				p1 = tree->child[0];
+
+				int memLoc = memLocVar (p1->name, p1->scope);
+
+				if (p1 != NULL) {
+					//LW na variavel do parametro
+					//RT = Mem [RS + offset]
+					//rt = pID
+					rs = newOperand_String (newTemp (TEMP_RT));
+					rt = newOperand_String (newTemp (TEMP_ZERO));
+					rd = newOperand_Const (memLoc);
+					insertQuad (opLW, rs, rt, rd);
+
+					//LI valor 100
+					//RT = imediato
+					//rs = 100
+					rs = newOperand_Const (PROGRAM_ADDRESS);
+					rt = newOperand_String (newTemp(TEMP_RS));
+					rd = newOperand_Null ();
+					insertQuad (opLI, rs, rt, rd);
+
+					//MULT pelo deslocamento de memória
+					//RD = RT * RS
+					//rd = pID * 100
+					rs = newOperand_String (newTemp (TEMP_RS));
+					rt = newOperand_String (newTemp (TEMP_RT));
+					rd = newOperand_String (newTemp (TEMP_RD));
+					insertQuad (opMULT, rs, rt, rd);
+
+					//LI valor 500
+					//RT = imediato
+					//rs = 500
+					rs = newOperand_Const (PROGRAM_PC);
+					rt = newOperand_String (newTemp(TEMP_RS));
+					rd = newOperand_Null ();
+					insertQuad (opLI, rs, rt, rd);
+
+					//ADD 500 + pID * 100
+					rs = newOperand_String (newTemp (TEMP_RS));
+					rt = newOperand_String (newTemp (TEMP_RD));
+					rd = newOperand_String (newTemp (TEMP_RT));
+					insertQuad (opADD, rs, rt, rd);
+				}
+
+				//HD [ pID * 100 + 27 ] = 500 + pID * 100
+				rs = newOperand_String (newTemp (TEMP_RT));
+				rt = newOperand_String (newTemp (TEMP_RD));
+				rd = newOperand_Const (27);
+				insertQuad (opCNTXT_OUT, rs, rt, rd);
+			}
 			else {
 				char * aux;
 				int params = 0;
@@ -681,7 +733,7 @@ static void genExp (TreeNode * tree) {
       			&& strcmp(tree->attr.name, "contextIn") != 0 && strcmp(tree->attr.name, "contextOut") != 0
       			&& strcmp(tree->attr.name, "swapIn") != 0 && strcmp(tree->attr.name, "swapOut") != 0
 				&& strcmp(tree->attr.name, "execSo") != 0 && strcmp(tree->attr.name, "execProcess") != 0
-				&& strcmp(tree->attr.name, "checkProcess") != 0)
+				&& strcmp(tree->attr.name, "checkProcess") != 0 && strcmp(tree->attr.name, "setPC") != 0)
       			insertQuad (opFUNC, rs, rt, rd);
 
       		p1 = tree->child[0];
