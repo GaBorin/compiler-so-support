@@ -259,11 +259,14 @@ void genInstructions (Quad * quad) {
 				break;
 
 			case opEXEC_SO:
-				instFormatJ (i_EXEC_SO, $t0, 0);
+				//exso passara o registrador $27 contendo PC do SO
+				instFormatJ (i_EXEC_SO, $pc, 0);
 				break;
 
 			case opEXEC_PROCESS:
-				instFormatJ (i_EXEC_PROCESS, $t0, rd.Content.value);
+				//instFormatJ (i_EXEC_PROCESS, $t0, rd.Content.value); (antigo)
+				//expr passara o registrador $27 contendo o PC do proc
+				instFormatJ (i_EXEC_PROCESS, $pc, 0);
 				break;
 
 			case opEND_PROCESS:
@@ -330,11 +333,8 @@ void printAssembly () {
 							printf ("%s, %s, %d", RegNames[inst.reg1], RegNames[inst.reg2], inst.imediate);
 						break;
 					case typeJ:
-						if (inst.opCode == i_JUMP || inst.opCode == i_JAL || inst.opCode == i_OUT || inst.opCode == i_EXEC_PROCESS)
+						if (inst.opCode == i_JUMP || inst.opCode == i_JAL || inst.opCode == i_OUT)
 							printf ("%d", inst.imediate);
-						else if (inst.opCode == i_EXEC_SO){
-							//nao imprime nada (sysCall: exso)
-						}
 						else 
 							printf ("%s", RegNames[inst.reg1]);
 						break;

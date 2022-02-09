@@ -58,8 +58,8 @@ void printBinary (Line * line) {
 						fprintf (res, "%s_%s_%s_%s;", getBin (inst.opCode, 6), getBin (inst.reg1, 5), getBin (inst.reg2, 5), getBin (inst.imediate, 16));
 						break;
 					case typeJ:
-						printf ("%s_%s%s;", getBin (inst.opCode, 6), getBin (inst.reg1, 5), getBin (inst.imediate, 21));
-						fprintf (res, "%s_%s%s;", getBin (inst.opCode, 6), getBin (inst.reg1, 5), getBin (inst.imediate, 21));
+						printf ("%s_%s_%s;", getBin (inst.opCode, 6), getBin (inst.reg1, 5), getBin (inst.imediate, 21));
+						fprintf (res, "%s_%s_%s;", getBin (inst.opCode, 6), getBin (inst.reg1, 5), getBin (inst.imediate, 21));
 						break;
 					default:
 						break;
