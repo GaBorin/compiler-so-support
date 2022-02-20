@@ -141,9 +141,21 @@ void genInstructions (Quad * quad) {
 				break;
 
 			case opEQ:
+				instFormatR (i_SUB, getReg (rd.Content.name), getReg (rs.Content.name), getReg (rt.Content.name));
+				q = q->next;
+				rs = q->rs;
+				rt = q->rt;
+				rd = q->rd;
+				instFormatI (i_BNQ, getReg (rs.Content.name), getReg (rt.Content.name), 0, rt.Content.name);
 				break;
 
 			case opDIF:
+				instFormatR (i_SUB, getReg (rd.Content.name), getReg (rs.Content.name), getReg (rt.Content.name));
+				q = q->next;
+				rs = q->rs;
+				rt = q->rt;
+				rd = q->rd;
+				instFormatI (i_BEQ, getReg (rs.Content.name), getReg (rt.Content.name), 0, rt.Content.name);
 				break;
 
 			case opLT:
@@ -289,7 +301,7 @@ void resetIm () {
 	while (l != NULL) {
 		inst = l->Kind.instruction;
 
-		if (l->Kind.instruction.opCode == i_BEQ || ((l->Kind.instruction.opCode == i_JUMP) && l->Kind.instruction.imediate == -1)) 
+		if (l->Kind.instruction.opCode == i_BEQ || l->Kind.instruction.opCode == i_BNQ || ((l->Kind.instruction.opCode == i_JUMP) && l->Kind.instruction.imediate == -1)) 
 			l->Kind.instruction.imediate = labelLine (l->Kind.instruction.b_label);
 
 		l = l->next;
