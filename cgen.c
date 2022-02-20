@@ -417,27 +417,11 @@ static void genExp (TreeNode * tree) {
 				if (p1 != NULL) {
 					//LW na variavel do parametro
 					//RT = Mem [RS + offset]
-					//rt = pID
-					rs = newOperand_String (newTemp (TEMP_RT));
+					//rd = pID
+					rs = newOperand_String (newTemp (TEMP_RD));
 					rt = newOperand_String (newTemp (TEMP_ZERO));
 					rd = newOperand_Const (memLoc);
 					insertQuad (opLW, rs, rt, rd);
-
-					//LI valor 100
-					//RT = imediato
-					//rs = 100
-					rs = newOperand_Const (PROGRAM_ADDRESS);
-					rt = newOperand_String (newTemp(TEMP_RS));
-					rd = newOperand_Null ();
-					insertQuad (opLI, rs, rt, rd);
-
-					//multiplica pelo deslocamento de memória
-					//RD = RT * RS
-					//rd = pID * 100
-					rs = newOperand_String (newTemp (TEMP_RS));
-					rt = newOperand_String (newTemp (TEMP_RT));
-					rd = newOperand_String (newTemp (TEMP_RD));
-					insertQuad (opMULT, rs, rt, rd);
 				}
 
 				rt = newOperand_String (newTemp (TEMP_RD));
@@ -458,26 +442,10 @@ static void genExp (TreeNode * tree) {
 					//LW na variavel do parametro
 					//RT = Mem [RS + offset]
 					//rt = pID
-					rs = newOperand_String (newTemp (TEMP_RT));
+					rs = newOperand_String (newTemp (TEMP_RD));
 					rt = newOperand_String (newTemp (TEMP_ZERO));
 					rd = newOperand_Const (memLoc);
 					insertQuad (opLW, rs, rt, rd);
-
-					//LI valor 100
-					//RT = imediato
-					//rs = 100
-					rs = newOperand_Const (PROGRAM_ADDRESS);
-					rt = newOperand_String (newTemp(TEMP_RS));
-					rd = newOperand_Null ();
-					insertQuad (opLI, rs, rt, rd);
-
-					//multiplica pelo deslocamento de memória
-					//RD = RT * RS
-					//rd = pID * 100
-					rs = newOperand_String (newTemp (TEMP_RS));
-					rt = newOperand_String (newTemp (TEMP_RT));
-					rd = newOperand_String (newTemp (TEMP_RD));
-					insertQuad (opMULT, rs, rt, rd);
 				}
 
 				rt = newOperand_String (newTemp (TEMP_RD));
@@ -503,21 +471,21 @@ static void genExp (TreeNode * tree) {
 					rd = newOperand_Const (memLoc);
 					insertQuad (opLW, rs, rt, rd);
 
-					//LI valor 100
+					//LI valor 1
 					//RT = imediato
-					//rs = 100
-					rs = newOperand_Const (PROGRAM_ADDRESS);
+					//rs = 1
+					rs = newOperand_Const (1);
 					rt = newOperand_String (newTemp(TEMP_RS));
 					rd = newOperand_Null ();
 					insertQuad (opLI, rs, rt, rd);
 
-					//multiplica pelo deslocamento de memória
-					//RD = RT * RS
-					//rd = pID * 100
+					//soma pelo deslocamento de memória
+					//RD = RT + RS
+					//rd = pID + 1
 					rs = newOperand_String (newTemp (TEMP_RS));
 					rt = newOperand_String (newTemp (TEMP_RT));
 					rd = newOperand_String (newTemp (TEMP_RD));
-					insertQuad (opMULT, rs, rt, rd);
+					insertQuad (opADD, rs, rt, rd);
 				}
 
 				rt = newOperand_String (newTemp (TEMP_RD));
@@ -543,21 +511,21 @@ static void genExp (TreeNode * tree) {
 					rd = newOperand_Const (memLoc);
 					insertQuad (opLW, rs, rt, rd);
 
-					//LI valor 100
+					//LI valor 1
 					//RT = imediato
-					//rs = 100
-					rs = newOperand_Const (PROGRAM_ADDRESS);
+					//rs = 1
+					rs = newOperand_Const (1);
 					rt = newOperand_String (newTemp(TEMP_RS));
 					rd = newOperand_Null ();
 					insertQuad (opLI, rs, rt, rd);
 
-					//multiplica pelo deslocamento de memória
-					//RD = RT * RS
-					//rd = pID * 100
+					//soma pelo deslocamento de memória
+					//RD = RT + RS
+					//rd = pID + 1
 					rs = newOperand_String (newTemp (TEMP_RS));
 					rt = newOperand_String (newTemp (TEMP_RT));
 					rd = newOperand_String (newTemp (TEMP_RD));
-					insertQuad (opMULT, rs, rt, rd);
+					insertQuad (opADD, rs, rt, rd);
 				}
 
 				rt = newOperand_String (newTemp (TEMP_RD));
@@ -594,30 +562,11 @@ static void genExp (TreeNode * tree) {
 					//LW na variavel do parametro
 					//RT = Mem [RS + offset]
 					//rt = pID
-					//tava RS (errado), mudei pra > RT <
-					rs = newOperand_String (newTemp (TEMP_RT));
-					//tava temp RT (errado eu acho); > TEMP_ZERO <
+					rs = newOperand_String (newTemp (TEMP_RD));
 					rt = newOperand_String (newTemp (TEMP_ZERO));
 					rd = newOperand_Const (memLoc);
 					insertQuad (opLW, rs, rt, rd);
-
-					//LI valor 100
-					//RT = imediato
-					//rs = 100
-					rs = newOperand_Const (PROGRAM_ADDRESS);
-					rt = newOperand_String (newTemp(TEMP_RS));
-					rd = newOperand_Null ();
-					insertQuad (opLI, rs, rt, rd);
-
-					//multiplica pelo deslocamento de memória
-					//RD = RT * RS
-					//rd = pID * 100
-					rs = newOperand_String (newTemp (TEMP_RS));
-					rt = newOperand_String (newTemp (TEMP_RT));
-					rd = newOperand_String (newTemp (TEMP_RD));
-					insertQuad (opMULT, rs, rt, rd);
 				}
-				//TEMP_RS mudei pra > TEMP_RD <
 				rs = newOperand_String (newTemp (TEMP_RD));
 				rt = newOperand_String (newTemp (TEMP_RD));
 				rd = newOperand_Const (28);
@@ -665,13 +614,13 @@ static void genExp (TreeNode * tree) {
 					//ADD 500 + pID * 100
 					rs = newOperand_String (newTemp (TEMP_RS));
 					rt = newOperand_String (newTemp (TEMP_RD));
-					rd = newOperand_String (newTemp (TEMP_RT));
+					rd = newOperand_String (newTemp (TEMP_RS));
 					insertQuad (opADD, rs, rt, rd);
 				}
 
-				//HD [ pID * 100 + 27 ] = 500 + pID * 100
-				rs = newOperand_String (newTemp (TEMP_RT));
-				rt = newOperand_String (newTemp (TEMP_RD));
+				//HD [ pID + 27 ] = 500 + pID * 100
+				rs = newOperand_String (newTemp (TEMP_RS));
+				rt = newOperand_String (newTemp (TEMP_RT));
 				rd = newOperand_Const (27);
 				insertQuad (opCNTXT_OUT, rs, rt, rd);
 			}
