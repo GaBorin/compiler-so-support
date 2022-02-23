@@ -74,13 +74,7 @@ void st_insert ( char * name, char * dataType, char * idType, char * scope, int 
       l->dataType = "void";
     else if(strcmp(name, "input") == 0)
       l->dataType = "int";
-    else if(strcmp(name, "contextIn") == 0)
-      l->dataType = "void";
-    else if(strcmp(name, "contextOut") == 0)
-      l->dataType = "void";
-    else if(strcmp(name, "swapIn") == 0)
-      l->dataType = "void";
-    else if(strcmp(name, "swapOut") == 0)
+    else if(strcmp(name, "switchData") == 0)
       l->dataType = "void";
     else if(strcmp(name, "execSo") == 0)
       l->dataType = "void";
@@ -221,13 +215,7 @@ int st_return (char * name, char * scope, int lineno){
     return 0;
   if (strcmp (l->name, "output") == 0)
     return 1;
-  if (strcmp (l->name, "contextIn") == 0)
-    return 1;
-  if (strcmp (l->name, "contextOut") == 0)
-    return 1;
-  if (strcmp (l->name, "swapIn") == 0)
-    return 1;
-  if (strcmp (l->name, "swapOut") == 0)
+  if (strcmp (l->name, "switchData") == 0)
     return 1;
   if (strcmp (l->name, "execSo") == 0)
     return 1;

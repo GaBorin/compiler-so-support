@@ -159,8 +159,7 @@ static void checkNode(TreeNode * t) {
           break;
         case ActivK:
           if (st_func_decl (t->name) ==  0 && strcmp (t->name, "input") != 0 && strcmp (t->name, "output") != 0 
-            && strcmp (t->name, "contextIn") != 0 && strcmp (t->name, "contextOut") != 0 
-            && strcmp (t->name, "swapIn") != 0  && strcmp (t->name, "swapOut") != 0
+            && strcmp (t->name, "switchData") != 0 
             && strcmp (t->name, "execSo") != 0  && strcmp (t->name, "execProcess") != 0
             && strcmp (t->name, "checkProcess") != 0 && strcmp (t->name, "setPC") != 0)
             stmtError (t, "not declared");

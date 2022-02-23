@@ -1,23 +1,24 @@
-int SOMode;
 int pId;
 int totalPrograms;
-int finishedPrograms[2];
+int finishedPrograms[3];
 int sumFinishedPrograms;
 
 void startSystem(void) {
-	SOMode = 0;
 	pId = 1;
 	totalPrograms = 2;
-	finishedPrograms[0] = 0;
 	finishedPrograms[1] = 0;
+	finishedPrograms[2] = 0;
 	sumFinishedPrograms = 0;
 }
 
-void switchData (int pOut, int pIn) {
-	swapOut(pOut);
-	contextOut(pOut);
-	swapIn(pIn);
-	contextIn(pIn);
+void setInitPC(void) {
+	int i;
+	i = 0;
+
+	while (i < totalPrograms) {
+		setPC(i);
+		i = i + 1;
+	}
 }
 
 void semPreempcao(void) {
@@ -31,19 +32,17 @@ void semPreempcao(void) {
 		}
 
 		pId = pId + 1;
-		sumFinishedPrograms = finishedPrograms[0] + finishedPrograms[1];
+		sumFinishedPrograms = finishedPrograms[1] + finishedPrograms[2];
 	}
 }
 
 void comPreempcao(void) {
 	while (sumFinishedPrograms != totalPrograms) {
-		if (finishedPrograms[pId] != 1) {
-			switchData(0, pId);
-			execProcess(pId);
-			switchData(pId, 0);
-			execSo();
-			finishedPrograms[pId] = checkProcess(pId);
-		}
+		switchData(0, pId);
+		execProcess(pId);
+		switchData(pId, 0);
+		execSo();
+		finishedPrograms[pId-1] = checkProcess(pId);
 
 		pId = pId + 1;
 
@@ -51,25 +50,27 @@ void comPreempcao(void) {
 			pId = 1;
 		}
 
-		sumFinishedPrograms = finishedPrograms[0] + finishedPrograms[1];
+		sumFinishedPrograms = finishedPrograms[1] + finishedPrograms[2];
 	}
 }
 
 void main(void) {
 	int SOMode;
 
-	SOMode = input();
+	SOMode = 1;
 
 	while(SOMode != 3){
 		startSystem();
+		setInitPC();
 
 		if(SOMode == 1){
 			semPreempcao();
+			SOMode = 2;
 		}
 		if(SOMode == 2){
 			comPreempcao();
 		}
 
-		SOMode = input();
+		SOMode = 3;
 	}
 }

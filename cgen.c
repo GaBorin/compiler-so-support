@@ -409,67 +409,44 @@ static void genExp (TreeNode * tree) {
 				rd = newOperand_Const (memLoc);
 				insertQuad (opOUT, rs, rt, rd);
 			}
-			else if (strcmp (tree->attr.name, "contextIn") == 0) {
+			else if (strcmp (tree->attr.name, "switchData") == 0) {
 				p1 = tree->child[0];
 
-				int memLoc = memLocVar (p1->name, p1->scope);
+				int memLoc1 = memLocVar (p1->name, p1->scope);
 				
 				if (p1 != NULL) {
 					//LW na variavel do parametro
 					//RT = Mem [RS + offset]
-					//rd = pID
-					rs = newOperand_String (newTemp (TEMP_RD));
-					rt = newOperand_String (newTemp (TEMP_ZERO));
-					rd = newOperand_Const (memLoc);
-					insertQuad (opLW, rs, rt, rd);
-				}
-
-				rt = newOperand_String (newTemp (TEMP_RD));
-
-				//itera sobre 32 registradores (posicoes 0 a 31)
-				for(int i = 0; i < 32; i++){
-					rs = newOperand_String (newTemp (i));
-					rd = newOperand_Const (i);
-					insertQuad (opCNTXT_IN, rs, rt, rd);
-				}
-			}
-			else if (strcmp (tree->attr.name, "contextOut") == 0) {
-				p1 = tree->child[0];
-
-				int memLoc = memLocVar (p1->name, p1->scope);
-
-				if (p1 != NULL) {
-					//LW na variavel do parametro
-					//RT = Mem [RS + offset]
-					//rt = pID
-					rs = newOperand_String (newTemp (TEMP_RD));
-					rt = newOperand_String (newTemp (TEMP_ZERO));
-					rd = newOperand_Const (memLoc);
-					insertQuad (opLW, rs, rt, rd);
-				}
-
-				rt = newOperand_String (newTemp (TEMP_RD));
-				
-				//itera sobre 32 registradores (posicoes 0 a 31)
-				for(int i = 0; i < 32; i++){
-					rs = newOperand_String (newTemp (i));
-					rd = newOperand_Const (i);
-					insertQuad (opCNTXT_OUT, rs, rt, rd);
-				}
-			}
-			else if (strcmp (tree->attr.name, "swapIn") == 0) {
-				p1 = tree->child[0];
-
-				int memLoc = memLocVar (p1->name, p1->scope);
-
-				if (p1 != NULL) {
-					//LW na variavel do parametro
-					//RT = Mem [RS + offset]
-					//rt = pID
+					//rt = pOut
 					rs = newOperand_String (newTemp (TEMP_RT));
 					rt = newOperand_String (newTemp (TEMP_ZERO));
-					rd = newOperand_Const (memLoc);
+					rd = newOperand_Const (memLoc1);
 					insertQuad (opLW, rs, rt, rd);
+
+					//LI valor 2
+					//RT = imediato
+					//rs = 2
+					rs = newOperand_Const (2);
+					rt = newOperand_String (newTemp(TEMP_RS));
+					rd = newOperand_Null ();
+					insertQuad (opLI, rs, rt, rd);
+
+					//multiplica pOut por 2
+					//RD = RT + RS
+					//rd = pOut * 2
+					rs = newOperand_String (newTemp (TEMP_RS));
+					rt = newOperand_String (newTemp (TEMP_RT));
+					rd = newOperand_String (newTemp (TEMP_RD));
+					insertQuad (opMULT, rs, rt, rd);
+
+					rt = newOperand_String (newTemp (TEMP_RD));
+
+					// context out
+					for(int i = 0; i < 32; i++){
+						rs = newOperand_String (newTemp (i));
+						rd = newOperand_Const (i);
+						insertQuad (opCNTXT_OUT, rs, rt, rd);
+					}
 
 					//LI valor 1
 					//RT = imediato
@@ -481,36 +458,60 @@ static void genExp (TreeNode * tree) {
 
 					//soma pelo deslocamento de memória
 					//RD = RT + RS
-					//rd = pID + 1
+					//rd = (pOut * 2) + 1
+					rs = newOperand_String (newTemp (TEMP_RD));
+					rt = newOperand_String (newTemp (TEMP_RS));
+					rd = newOperand_String (newTemp (TEMP_RD));
+					insertQuad (opADD, rs, rt, rd);
+
+					rt = newOperand_String (newTemp (TEMP_RD));
+
+					// swap out 
+					for(int i = 0; i < 32; i++){
+						rs = newOperand_String (newTemp (TEMP_ZERO));
+						rd = newOperand_Const (i);
+						insertQuad (opSWAP_OUT, rs, rt, rd);
+					}
+				}
+
+				p2 = p1->sibling;
+
+				int memLoc2 = memLocVar (p2->name, p2->scope);
+
+				if (p2 != NULL) {
+					//LW na variavel do parametro
+					//RT = Mem [RS + offset]
+					//rt = pIn
+					rs = newOperand_String (newTemp (TEMP_RT));
+					rt = newOperand_String (newTemp (TEMP_ZERO));
+					rd = newOperand_Const (memLoc2);
+					insertQuad (opLW, rs, rt, rd);
+
+					//LI valor 2
+					//RT = imediato
+					//rs = 2
+					rs = newOperand_Const (2);
+					rt = newOperand_String (newTemp(TEMP_RS));
+					rd = newOperand_Null ();
+					insertQuad (opLI, rs, rt, rd);
+
+					//multiplica pIn por 2
+					//RD = RT + RS
+					//rd = pIn * 2
 					rs = newOperand_String (newTemp (TEMP_RS));
 					rt = newOperand_String (newTemp (TEMP_RT));
 					rd = newOperand_String (newTemp (TEMP_RD));
-					insertQuad (opADD, rs, rt, rd);
-				}
+					insertQuad (opMULT, rs, rt, rd);
 
-				rt = newOperand_String (newTemp (TEMP_RD));
-				
-				//gera offset de 0 a 31
-				for(int i = 0; i < 32; i++){
-					rs = newOperand_String (newTemp (TEMP_ZERO));
-					rd = newOperand_Const (i);
-					insertQuad (opSWAP_IN, rs, rt, rd);
-				}
-			}
-			else if (strcmp (tree->attr.name, "swapOut") == 0) {
-				p1 = tree->child[0];
+					rt = newOperand_String (newTemp (TEMP_RD));
 
-				int memLoc = memLocVar (p1->name, p1->scope);
-
-				if (p1 != NULL) {
-					//LW na variavel do parametro
-					//RT = Mem [RS + offset]
-					//rt = pID
-					rs = newOperand_String (newTemp (TEMP_RT));
-					rt = newOperand_String (newTemp (TEMP_ZERO));
-					rd = newOperand_Const (memLoc);
-					insertQuad (opLW, rs, rt, rd);
-
+					// context in
+					for(int i = 0; i < 32; i++){
+						rs = newOperand_String (newTemp (i));
+						rd = newOperand_Const (i);
+						insertQuad (opCNTXT_IN, rs, rt, rd);
+					}
+					
 					//LI valor 1
 					//RT = imediato
 					//rs = 1
@@ -521,20 +522,20 @@ static void genExp (TreeNode * tree) {
 
 					//soma pelo deslocamento de memória
 					//RD = RT + RS
-					//rd = pID + 1
-					rs = newOperand_String (newTemp (TEMP_RS));
-					rt = newOperand_String (newTemp (TEMP_RT));
-					rd = newOperand_String (newTemp (TEMP_RD));
+					//rd = (pIn * 2) + 1
+				rs = newOperand_String (newTemp (TEMP_RD));
+				rt = newOperand_String (newTemp (TEMP_RS));
+				rd = newOperand_String (newTemp (TEMP_RD));
 					insertQuad (opADD, rs, rt, rd);
-				}
 
-				rt = newOperand_String (newTemp (TEMP_RD));
-				
-				//gera offset de 0 a 31
-				for(int i = 0; i < 32; i++){
-					rs = newOperand_String (newTemp (TEMP_ZERO));
-					rd = newOperand_Const (i);
-					insertQuad (opSWAP_OUT, rs, rt, rd);
+					rt = newOperand_String (newTemp (TEMP_RD));
+
+					// swap in
+					for(int i = 0; i < 32; i++){
+						rs = newOperand_String (newTemp (TEMP_ZERO));
+						rd = newOperand_Const (i);
+						insertQuad (opSWAP_IN, rs, rt, rd);
+					}
 				}
 			}
 			else if (strcmp (tree->attr.name, "execSo") == 0) {
@@ -679,8 +680,7 @@ static void genExp (TreeNode * tree) {
 			rd = newOperand_Null ();
 
       		if (strcmp(tree->attr.name, "input") != 0 && strcmp(tree->attr.name, "output") != 0
-      			&& strcmp(tree->attr.name, "contextIn") != 0 && strcmp(tree->attr.name, "contextOut") != 0
-      			&& strcmp(tree->attr.name, "swapIn") != 0 && strcmp(tree->attr.name, "swapOut") != 0
+      			&& strcmp(tree->attr.name, "switchData") != 0 
 				&& strcmp(tree->attr.name, "execSo") != 0 && strcmp(tree->attr.name, "execProcess") != 0
 				&& strcmp(tree->attr.name, "checkProcess") != 0 && strcmp(tree->attr.name, "setPC") != 0)
       			insertQuad (opFUNC, rs, rt, rd);
