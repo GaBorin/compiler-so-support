@@ -442,29 +442,29 @@ static void genExp (TreeNode * tree) {
 					rt = newOperand_String (newTemp (TEMP_RD));
 
 					// context out
-					for(int i = 0; i < 32; i++){
+					for(int i = 1; i < 32; i++){
 						rs = newOperand_String (newTemp (i));
 						rd = newOperand_Const (i);
 						insertQuad (opCNTXT_OUT, rs, rt, rd);
 					}
 
-					//LI valor 1
-					//RT = imediato
-					//rs = 1
-					rs = newOperand_Const (1);
-					rt = newOperand_String (newTemp(TEMP_RS));
-					rd = newOperand_Null ();
-					insertQuad (opLI, rs, rt, rd);
+					// //LI valor 1
+					// //RT = imediato
+					// //rs = 1
+					// rs = newOperand_Const (1);
+					// rt = newOperand_String (newTemp(TEMP_RS));
+					// rd = newOperand_Null ();
+					// insertQuad (opLI, rs, rt, rd);
 
-					//soma pelo deslocamento de memória
-					//RD = RT + RS
-					//rd = (pOut * 2) + 1
-					rs = newOperand_String (newTemp (TEMP_RD));
-					rt = newOperand_String (newTemp (TEMP_RS));
-					rd = newOperand_String (newTemp (TEMP_RD));
-					insertQuad (opADD, rs, rt, rd);
+					// //soma pelo deslocamento de memória
+					// //RD = RT + RS
+					// //rd = (pOut * 2) + 1
+					// rs = newOperand_String (newTemp (TEMP_RD));
+					// rt = newOperand_String (newTemp (TEMP_RS));
+					// rd = newOperand_String (newTemp (TEMP_RD));
+					// insertQuad (opADD, rs, rt, rd);
 
-					rt = newOperand_String (newTemp (TEMP_RD));
+					// rt = newOperand_String (newTemp (TEMP_RD));
 
 					// swap out 
 					for(int i = 0; i < 32; i++){
@@ -505,36 +505,18 @@ static void genExp (TreeNode * tree) {
 
 					rt = newOperand_String (newTemp (TEMP_RD));
 
-					// context in
-					for(int i = 0; i < 32; i++){
-						rs = newOperand_String (newTemp (i));
-						rd = newOperand_Const (i);
-						insertQuad (opCNTXT_IN, rs, rt, rd);
-					}
-					
-					//LI valor 1
-					//RT = imediato
-					//rs = 1
-					rs = newOperand_Const (1);
-					rt = newOperand_String (newTemp(TEMP_RS));
-					rd = newOperand_Null ();
-					insertQuad (opLI, rs, rt, rd);
-
-					//soma pelo deslocamento de memória
-					//RD = RT + RS
-					//rd = (pIn * 2) + 1
-				rs = newOperand_String (newTemp (TEMP_RD));
-				rt = newOperand_String (newTemp (TEMP_RS));
-				rd = newOperand_String (newTemp (TEMP_RD));
-					insertQuad (opADD, rs, rt, rd);
-
-					rt = newOperand_String (newTemp (TEMP_RD));
-
 					// swap in
-					for(int i = 0; i < 32; i++){
+					for(int i = 31; i >= 0; i--){
 						rs = newOperand_String (newTemp (TEMP_ZERO));
 						rd = newOperand_Const (i);
 						insertQuad (opSWAP_IN, rs, rt, rd);
+					}
+
+					// context in
+					for(int i = 31; i > 0; i--){
+						rs = newOperand_String (newTemp (i));
+						rd = newOperand_Const (i);
+						insertQuad (opCNTXT_IN, rs, rt, rd);
 					}
 				}
 			}

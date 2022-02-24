@@ -25,7 +25,7 @@ void semPreempcao(void) {
 	while (sumFinishedPrograms != totalPrograms) {
 		while (finishedPrograms[pId] != 1) {
 			switchData(0, pId);
-			execProcess(pId);
+			execProcess();
 			switchData(pId, 0);
 			execSo();
 			finishedPrograms[pId] = checkProcess(pId);
